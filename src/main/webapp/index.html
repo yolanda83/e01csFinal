@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>E01cs</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/js/bootstrap.min.js"></script>
+
+
+        <style>
+
+            body {
+                background-color: #E3CEF6;
+                width: 100%;
+            }
+
+            h1, td {
+                text-align: center;
+            }
+
+            table {
+                margin: 0 auto;
+                background: white;
+                border-collapse: collapse;
+                border-radius: 5px;
+                margin-top: 20px;
+            }
+
+            .formulario {
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            #tabError {
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="jumbotron">
+            <h1 class="display-4">Ejercicio 01 Cliente Servidor (servlets)</h1>
+        </div>
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <!--<form action="/e01cs/table?ancho=ancho&alto=alto" method="get">--><!-- 1.context path 2.url pattern 3.recogida de parámetros-->
+                    <form class="formulario">  <!-- 1.context path 2.url pattern-->
+                        <!--                        es importante un NAME a cada input pq son los parámetros que pasaremos a java
+                        -->                                                
+                        <label for="ancho">Ancho:</label>
+                        <input type="text" name="ancho" id="ancho" value="" placeholder="Escribe un número...">
+
+
+                        <label for="alto">Alto:</label>
+                        <input type="text" name="alto" id="alto" value="" placeholder="Escribe un número...">
+
+                        <!-- El botón tiene que tener un type submit para que pueda hacer el get o post-->
+                        <input id="botoninicio" type="button" value="Enviar">
+
+                    </form>
+
+                </div>
+
+                <div class="col-md-12">
+                    <div id="tabOk" ></div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="alert alert-danger" id="tabError" role="alert">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+
+            $(document).ready(function () {
+
+                $("#botoninicio").click(function () {
+
+                    $("#tabError").empty();
+
+                    var ancho = $("#ancho").val();
+                    var alto = $("#alto").val();
+
+                    //validaciones
+                    if (ancho == "" || alto == "") {
+                        $("#tabError").append("Debes escribir un número en ancho y alto.");
+                        return;
+                    } else {
+
+                        $.ajax({
+                            url: "/e01cs/table?ancho=" + ancho + "&alto=" + alto,
+                            method: "get",
+                            dataType: "json",
+                            cache: false,
+                            success: function (dataJson) {
+                                var tabla = "<table class='table table-sm table-striped'>";
+                                var arrayLength = dataJson.length;
+
+                                for (var i = 0; i < arrayLength; i++) {
+                                    tabla += "<tr>";
+                                    for (var j = 0; j < dataJson[i].array.length; j++) {
+                                        tabla += "<td>";
+                                        tabla += dataJson[i].array[j].resultado;
+                                        tabla += "</td>";
+                                    }
+                                    tabla += "</tr>";
+                                }
+                                tabla += "</table>";
+                                $("#tabOk").empty().append(tabla);
+
+                            }, error: function (errores) {
+                                $("#tabError").empty().append("ERROR");
+
+//                                var arrayLength = errores.length;
+//                                var array2Length = lineaerrores.length;
+//                                for (var i = 0; i < arrayLength; i++) {
+//                                    for (var j = 0; j < errores[i].arrayLength; j++) {             
+//                                        e = errores[i].array[j];    
+//                                    }
+//                                }
+//                                $("#tabError").empty().append(e);
+                            }
+                        });
+                    }
+                    return false;
+                });
+
+                $("#ancho").keyup(function () {
+                    var ancho = $("#ancho").val();
+
+                    $("#ancho").css("background-color", "white");
+                    $("#tabError").empty();
+
+                    if (ancho == " ") {
+                        $("#tabError").append("Has introducido un espacio en blanco, introduce por favor un número en ancho.");
+                        $("#ancho").css("background-color", "pink");
+                        return;
+                    }
+                    if (ancho != "") {
+
+                        var expReg = /^[1-9][0-9]*$/;
+                        if (!expReg.test(ancho)) {
+//                  if (isNaN(ancho)) {
+                            $("#tabError").append("Introduce solo números por favor.");
+                            $("#ancho").css("background-color", "pink");
+                            return;
+                        }
+
+                    }
+
+                    if (ancho > 100) {
+                        $("#tabError").append("Introduce un número hasta el 100 por favor.");
+                        $("#ancho").css("background-color", "pink");
+                        return;
+                    }
+
+                    $("#ancho").css("background-color", "white");
+
+
+                });
+
+                $("#alto").keyup(function () {
+                    var alto = $("#alto").val();
+
+                    $("#tabError").empty();
+
+                    if (alto == " ") {
+                        $("#tabError").append("Has introducido un espacio en blanco, introduce por favor un número en alto.");
+                        $("#alto").css("background-color", "pink");
+                        return;
+                    }
+
+                    if (alto != "") {
+                        var expReg = /^[1-9][0-9]*$/;
+                        if (!expReg.test(alto)) {
+//                  if (isNaN(alto)) {
+                            $("#tabError").append("Introduce solo números por favor.");
+                            $("#alto").css("background-color", "pink");
+                            return;
+                        }
+                    }
+
+                    if (alto > 100) {
+                        $("#tabError").append("Introduce un número hasta el 100 por favor.");
+                        $("#alto").css("background-color", "pink");
+                        return;
+                    }
+
+                    $("#alto").css("background-color", "white");
+
+
+                });
+
+            });
+
+        </script>
+    </body>
+</html>

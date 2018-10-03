@@ -1,0 +1,15 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 25-sep-2018, 11:05:04
+    Author     : Yolanda
+*/
+
+body {background-color: #E3CEF6; width: 100%;}
+h1 {text-align: center;}
+.tab, p {text-align: center; padding: 10px;}
+td {text-align: center; font-family: 'Ubuntu Mono', monospace;color: black; padding: 10px; font-size: 20px;}
+table {margin: 0 auto; background: white; border-collapse: collapse;border-radius: 20px; margin-top: 20px;}
